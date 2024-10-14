@@ -1,22 +1,23 @@
 import { homedir } from 'node:os';
 import {
   chdir,
-  cwd,
-  argv, 
   stdin as input, 
   stdout as output
 } from 'node:process';
 import readline from 'node:readline/promises';
+import { getUserName } from './utils/getUserName.js';
+import fsService from './services/file.service.js';
+import { showCurrentDirectory } from './utils/showCurrentDirectory.js';
+
 
 const init = async () => {
   const rl = readline.createInterface({ input, output, prompt: '> ' });
   chdir(homedir());
   
-  const arg = argv.find((item) => item.includes('--username'));
-  const userName = arg ? arg?.split('=')[1] : 'Unknown User';
+  const userName = getUserName();
   console.log(`Welcome to the File Manager, ${userName}!`);
 
-  output.write(`You are currently in ${cwd()}\n`);
+  output.write(`You are currently in ${process.cwd()}\n`);
 
   rl.on('line', async (input) => {
     let [commandName, ...params] = input
@@ -25,34 +26,82 @@ const init = async () => {
       .split(' ')
       .filter((item) => item);
 
-    switch(commandName) {
-      case 'up':
-        console.log('Go up');
-        break;
-      case 'ls':
-        console.log('List Files');
-        break;
-      case 'os':
-        console.log('OS');
-        break;
-      case 'cd':
-        console.log('changeDirectory');
-        break;
-      case 'pwd':
-        console.log('printWorkingDirectory');
-        break;
-      case 'cat':
-        console.log('cat');
-        break;
-      case 'add':
-        console.log('add file');
-        break;
-      case '.exit':
-        rl.close();
-        break;
-      default:
-        output.write('Invalid input\n');
-        output.write(`You are currently in ${cwd()}\n`);
+    try {
+      switch(commandName) {
+        case 'up':
+          if (!params.length) {
+            await fsService.dirUp();
+            break;
+          } 
+          throw new Error();
+        case 'cd':
+          if (params.length === 1) {
+            await fsService.changeDir(params);
+            break;
+          }
+          throw new Error();
+        case 'ls':
+          if (!params.length) {
+            await fsService.listFiles();
+            break;
+          }
+          throw new Error();
+        case 'cat':
+          if (params.length === 1) {
+            await fsService.readFile(params);
+            break;
+          }
+          throw new Error();
+        case 'add':
+          if (params.length === 1) {
+            await fsService.addFile(params);
+            break;
+          }
+          throw new Error();
+        case 'rn':
+          if (params.length === 2) {
+            await fsService.renameFile(params);
+            break;
+          }
+          throw new Error();
+        case 'cp':
+          if (params.length === 2) {
+            await fsService.copyFile(params);
+            break;
+          }
+          throw new Error();
+        case 'mv':
+          if (params.length === 2) {
+            await fsService.moveFile(params);
+            break;
+          }
+          throw new Error();
+        case 'rm':
+          if (params.length === 1) {
+            await fsService.deleteFile(params);
+            break;
+          }
+          throw new Error();
+        case 'os':
+          console.log('OS operation');
+          break;
+        case 'cd':
+          console.log('changeDirectory');
+          break;
+        case 'pwd':
+          console.log('printWorkingDirectory');
+          break;
+        case '.exit':
+          rl.close();
+          break;
+        default:
+          output.write('Invalid input\n');
+          break;
+      }
+    } catch (err) {
+      output.write('Invalid input\n');
+    } finally {
+      await showCurrentDirectory();
     }
   });
 

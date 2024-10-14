@@ -8,6 +8,7 @@ import readline from 'node:readline/promises';
 import { getUserName } from './utils/getUserName.js';
 import fsService from './services/file.service.js';
 import { showCurrentDirectory } from './utils/showCurrentDirectory.js';
+import { hashFile } from './services/hash.service.js';
 
 
 const init = async () => {
@@ -82,11 +83,14 @@ const init = async () => {
             break;
           }
           throw new Error();
+        case 'hash':
+          if (params.length === 1) {
+            await hashFile(params);
+            break;
+          }
+          throw new Error();
         case 'os':
           console.log('OS operation');
-          break;
-        case 'cd':
-          console.log('changeDirectory');
           break;
         case 'pwd':
           console.log('printWorkingDirectory');

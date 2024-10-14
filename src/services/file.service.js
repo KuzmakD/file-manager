@@ -111,7 +111,7 @@ const copyFile = async (params) => {
 const moveFile = async (params) => {
   try {
     const oldFilePath = resolve(params[0]);
-    const newFilePath = resolve(params[1], basename(oldFilePath));;
+    const newFilePath = resolve(params[1], basename(oldFilePath));
 
     const inputStream = fs.createReadStream(oldFilePath);
     const outputStream = fs.createWriteStream(newFilePath);

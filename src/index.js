@@ -10,6 +10,7 @@ import fsService from './services/file.service.js';
 import { showCurrentDirectory } from './utils/showCurrentDirectory.js';
 import { hashFile } from './services/hash.service.js';
 import { compressFile } from './services/compress.service.js';
+import { decompressFile } from './services/decompress.service.js';
 import { getOsInfo } from './services/os.service.js';
 
 const init = async () => {
@@ -97,6 +98,12 @@ const init = async () => {
         case 'compress':
           if (params.length === 2) {
             await compressFile(params);
+            break;
+          }
+          throw new Error();
+        case 'decompress':
+          if (params.length === 2) {
+            await decompressFile(params);
             break;
           }
           throw new Error();

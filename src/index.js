@@ -9,21 +9,20 @@ import { getUserName } from './utils/getUserName.js';
 import fsService from './services/file.service.js';
 import { showCurrentDirectory } from './utils/showCurrentDirectory.js';
 import { hashFile } from './services/hash.service.js';
-
+import { compressFile } from './services/compress.service.js';
+import { getOsInfo } from './services/os.service.js';
 
 const init = async () => {
   const rl = readline.createInterface({ input, output, prompt: '> ' });
   chdir(homedir());
   
   const userName = getUserName();
-  console.log(`Welcome to the File Manager, ${userName}!`);
-
+  output.write(`Welcome to the File Manager, ${userName}!\n`);
   output.write(`You are currently in ${process.cwd()}\n`);
 
   rl.on('line', async (input) => {
     let [commandName, ...params] = input
       .trim()
-      .toLowerCase()
       .split(' ')
       .filter((item) => item);
 
@@ -90,11 +89,17 @@ const init = async () => {
           }
           throw new Error();
         case 'os':
-          console.log('OS operation');
-          break;
-        case 'pwd':
-          console.log('printWorkingDirectory');
-          break;
+          if (params.length === 1) {
+            await getOsInfo(params);
+            break;
+          }
+          throw new Error();
+        case 'compress':
+          if (params.length === 2) {
+            await compressFile(params);
+            break;
+          }
+          throw new Error();
         case '.exit':
           rl.close();
           break;

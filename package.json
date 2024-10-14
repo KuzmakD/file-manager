@@ -1,0 +1,23 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments",
+  "main": "index.js",
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KuzmakD/file-manager.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Dmitriy Korzun",
+  "license": "ISC",
+  "homepage": "https://github.com/AlreadyBored/node-nodejs-basics#readme"
+}
